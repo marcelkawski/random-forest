@@ -15,19 +15,64 @@ getRpartAccuracy = function(dat) {
     cl~ ., 
     data = train, 
     method="class", 
-    minsplit = 10,
-    minbucket=3
   ) 
   
-  PredictCART_train = predict(tree_model, data = train, type = "class")
-  results <- table(train$cl, PredictCART_train)
-  accuracy <- sum(diag(results))/sum(results)
-  # print(accuracy)
+  lmat <- matrix(c(0,4,3,0), nrow=2, ncol=2, byrow=F)
+  tree_model2 <- rpart(
+    cl~ ., 
+    data=train,
+    method='class', 
+    parms=list(split='gini', loss=lmat)
+  )
+  
+  tree_model3 <- rpart(
+    cl~ ., 
+    data=train,
+    method='class', 
+    parms=list(split='gini', prior= c(.65,.35))
+  )
+  
+  lmat <- matrix(c(0,4,3,0), nrow=2, ncol=2, byrow=F)
+  tree_model4 <- rpart(
+    cl~ ., 
+    data=train,
+    method='class', 
+    parms=list(split='information', loss=lmat)
+  )
+  
+  tree_model5 <- rpart(
+    cl~ ., 
+    data=train,
+    method='class', 
+    parms=list(split='information', prior= c(.65,.35))
+  )
+
   
   PredictCART = predict(tree_model, newdata = test, type = "class")
   results <- table(test$cl, PredictCART)
   accuracy <- sum(diag(results))/sum(results)
-  # print(accuracy)
+  print(accuracy)
+  
+  PredictCART = predict(tree_model2, newdata = test, type = "class")
+  results <- table(test$cl, PredictCART)
+  accuracy <- sum(diag(results))/sum(results)
+  print(accuracy)
+  
+  PredictCART = predict(tree_model3, newdata = test, type = "class")
+  results <- table(test$cl, PredictCART)
+  accuracy <- sum(diag(results))/sum(results)
+  print(accuracy)
+  
+  PredictCART = predict(tree_model4, newdata = test, type = "class")
+  results <- table(test$cl, PredictCART)
+  accuracy <- sum(diag(results))/sum(results)
+  print(accuracy)
+  
+  PredictCART = predict(tree_model5, newdata = test, type = "class")
+  results <- table(test$cl, PredictCART)
+  accuracy <- sum(diag(results))/sum(results)
+  print(accuracy)
+
   
   return(accuracy)
 }

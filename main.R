@@ -10,15 +10,8 @@ rf_cm1 = getRFConfMatrix(data1)
 rf_cm2 = getRFConfMatrix(data2)
 rf_cm3 = getRFConfMatrix(data3)
 
-rpart_cm1 <- getRpartAccuracy(data1)
-rpart_cm2 <- getRpartAccuracy(data2)
-rpart_cm3 <- getRpartAccuracy(data3)
+rpart_acc1 <- getRpartAccuracy(data1)
+rpart_acc2 <- getRpartAccuracy(data2)
+rpart_acc3 <- getRpartAccuracy(data3)
 
-for (i in 1:10)
-{
-  rpart_cm1 <-append(rpart_cm1, getRpartAccuracy(data1))
-  rpart_cm2 <-append(rpart_cm2, getRpartAccuracy(data2))
-  rpart_cm3 <-append(rpart_cm3, getRpartAccuracy(data3))
-}
-
-print(rpart_cm1)
+print(rpart_acc1)
