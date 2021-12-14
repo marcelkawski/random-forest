@@ -1,10 +1,4 @@
-library(caret)
 library(randomForest)
-library(fields)
-library(caTools)
-library(readxl)
-
-source('utils.R')
 
 getRFModel = function(formula, data) {
   return (randomForest(formula, data = data))
@@ -15,15 +9,15 @@ makeRFPrediction = function(model, data) {
 }
 
 
-getRFConfMatrix = function(data, split_ratio = .8) {
-  sample = sample.split(data$cl, SplitRatio = split_ratio)
-  train_data = subset(data, sample == TRUE)
-  test_data  = subset(data, sample == FALSE)
+getRFConfMatrix = function(data, splitRatio = .8) {
+  sample = sample.split(data$cl, SplitRatio = splitRatio)
+  trainData = subset(data, sample == TRUE)
+  testData  = subset(data, sample == FALSE)
   
-  rf = getRFModel(cl ~ ., train_data)
-  prediction = makeRFPrediction(rf, test_data)
+  rf = getRFModel(cl ~ ., trainData)
+  prediction = makeRFPrediction(rf, testData)
   
-  return (confusionMatrix(prediction, test_data$cl))
+  return (confusionMatrix(prediction, testData$cl))
 }
 
 

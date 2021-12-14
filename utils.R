@@ -1,9 +1,9 @@
-getData = function(path, doc_type, header, sep = ',', dec = '.') {
-  if (doc_type == 'txt')
+getData = function(path, docType, header, sep = ',', dec = '.') {
+  if (docType == 'txt')
     data = read.delim(path, header = header, sep = sep, dec = dec)
-  else if (doc_type == 'xlsx')
+  else if (docType == 'xlsx')
     data = as.data.frame(read_excel(path = path, col_names = header))
-  else if (doc_type == 'csv')
+  else if (docType == 'csv')
     data = read.table(path, header = header, sep = sep)
   
   colnames(data)[ncol(data)] = 'cl'
