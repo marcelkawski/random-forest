@@ -1,6 +1,5 @@
 library(rpart)
 library(caret)
-library(caTools)
 
 
 getRpartTreeModel = function(formula, data, method) {

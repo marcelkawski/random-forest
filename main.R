@@ -16,4 +16,6 @@ data1 = getData(path = 'data/telescope/data', docType = 'txt', header = FALSE)
 # rpartTreeCm3 = getRpartTreeConfMatrix(data3)
 
 getRpartForestConfMatrix(data1)
+# getRpartTreeConfMatrix(data1)
+# getRFConfMatrix(data1)
   

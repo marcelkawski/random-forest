@@ -1,6 +1,5 @@
 library(randomForest)
 library(caret)
-library(caTools)
 
 
 getRFModel = function(formula, data) {

@@ -1,5 +1,6 @@
 library(readxl)
 library(gsubfn)
+library(caTools)
 
 
 getData = function(path, docType, header = FALSE, sep = ',', dec = '.') {
