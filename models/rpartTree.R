@@ -1,4 +1,6 @@
 library(rpart)
+library(caret)
+library(caTools)
 
 
 getRpartTreeModel = function(formula, data, method) {
@@ -10,9 +12,7 @@ makeRpartTreePrediction = function(model, data, type) {
 }
 
 getRpartTreeConfMatrix = function(data, splitRatio = .8) {
-  sample = sample.split(data$cl, SplitRatio = splitRatio)
-  trainData = subset(data, sample == TRUE)
-  testData  = subset(data, sample == FALSE)
+  attach(splitData(data))
   
   tree = getRpartTreeModel(cl ~ ., trainData, 'class')
   prediction = makeRpartTreePrediction(tree, testData, 'class')

@@ -1,48 +1,50 @@
 library(rpart)
+library(caret)
+library(gsubfn)
+
+source('utils.R')
 
 
 getRpartForestModel = function(data, method, treesNum) {
-  # classCounter = list()
-  # classCounter.names = classes
-  # classCounter = vector('list', length(classCounter.names))
-  # names(classCounter) = classCounter.names
-  
-  # for (name in names(classCounter)) {
-  #   classCounter[[name]] = 0
-  # }
-  
   forest = list()
   for (i in 1:treesNum) {
     # sampling rows
-    samples = data[sample(nrow(data), 0.2 * nrow(data)), ]
-    
-    # sampling columns
-    colNums = sample(ncol(samples) - 1, 0.5 * ncol(samples))
-    colNums[[length(colNums) + 1]] = ncol(samples) # adding class columns
-    samples = samples[, colNums]
+    samples = data[sample(nrow(data), nrow(data), replace = TRUE), ]
     
     tree = rpart(cl ~ ., samples, method = method)
-    # classCounter[[prediction]] = classCounter[[prediction]] + 1
     forest[[i]] = tree
   }
   
-  print(forest)
   return (forest)
 }
 
-
-makeRpartForestPrediction = function(forest, data) {
+makeRpartForestPrediction = function(forest, data, type) {
+  predsCols = list()
+  for (i in 1:length(forest)) {
+    predsCols[[i]] = paste('pred', i, sep = '')
+  }
   
+  for (i in 1:length(forest)) {
+    treePred = predict(forest[[i]], newdata = data, type = type)
+    data[, predsCols[[i]]] = unlist(treePred)
+  }
+  
+  data$prediction = vector(mode = "integer", length = nrow(data))
+  for (i in 1:nrow(data)) {
+    preds = unlist(data[i, unlist(predsCols)])
+    data$prediction[i] = getMostFrequent(preds)
+  }
+  
+  return (data$prediction)
 }
 
 
-getRpartForestConfMatrix = function(data, splitRatio = .8, treesNum = 5) {
-  sample = sample.split(data$cl, SplitRatio = splitRatio)
-  trainData = subset(data, sample == TRUE)
-  testData  = subset(data, sample == FALSE)
+getRpartForestConfMatrix = function(data, treesNum = 2) {
+  attach(splitData(data))
   
   forest = getRpartForestModel(trainData, 'class', treesNum)
   prediction = makeRpartForestPrediction(forest, testData, 'class')
   
-  # return (confusionMatrix(prediction, testData$cl))
+  return (confusionMatrix(as.factor(prediction), 
+                          as.factor(as.character(testData$cl))))
 }
