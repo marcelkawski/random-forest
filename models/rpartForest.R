@@ -36,14 +36,14 @@ makeRpartForestPrediction = function(forest, data, type) {
 }
 
 
-getRpartForestConfMatrix = function(data, treesNum = 5) {
+getRpartForestConfMatrix = function(data, treesNum = 50) {
   attach(splitData(data))
   
   alist <- list(eval=evaluationFunction, split=splitFunction, init=initFunction)
   forest = getRpartForestModel(trainData, alist, treesNum)
   prediction = makeRpartForestPrediction(forest, testData, 'vector')
   
-  prediction = convertPrediction(prediction, testData)
+  prediction = convertPrediction(prediction = prediction, testData = testData)
   
   return (confusionMatrix(as.factor(prediction), 
                           as.factor(as.character(testData$cl))))
@@ -54,17 +54,36 @@ convertPrediction = function(prediction, testData){
   print(min(prediction))
   print(max(prediction))
   
-  treshold = as.double(min(prediction)) + ((as.double(max(prediction)) - 
-                                              as.double(min(prediction)))/2)
+  minPrediction = min(prediction)
+  maxPrediction = max(prediction)
+  
+  no_classes = length(levels(testData$cl))
+  
+  step = (as.double(maxPrediction) - as.double(minPrediction))/no_classes
   
   for (i in 1:length(prediction)){
-    if(prediction[i] <  treshold){
-      prediction[i] = levels(testData$cl)[1]
-    }
-    else{
-      prediction[i] = levels(testData$cl)[2]
+    for (j in 1:no_classes){
+      if (prediction[i] == as.double(maxPrediction)){
+        prediction[i] = levels(testData$cl)[no_classes]
+        break
+      }
+      if ((prediction[i] >= as.double(minPrediction) + (j-1)*step) & (prediction[i] < as.double(minPrediction) + (j)*step))
+        prediction[i] = levels(testData$cl)[j]
+      
     }
   }
+  
+  print(prediction)
+  # treshold = as.double(min(prediction)) + step
+  # 
+  # for (i in 1:length(prediction)){
+  #   if(prediction[i] <  treshold){
+  #     prediction[i] = levels(testData$cl)[1]
+  #   }
+  #   else{
+  #     prediction[i] = levels(testData$cl)[2]
+  #   }
+  # }
   
   return (prediction)
 }
