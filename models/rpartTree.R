@@ -3,7 +3,7 @@ library(caret)
 
 
 getRpartTreeModel = function(formula, data, method) {
-  return (rpart(formula, data, method = method))
+  return (rpart(formula, data, method = method, parms = list(split = "information"), minsplit = 40))
 }
 
 makeRpartTreePrediction = function(model, data, type) {
@@ -16,5 +16,5 @@ getRpartTreeConfMatrix = function(data, splitRatio = .8) {
   tree = getRpartTreeModel(cl ~ ., trainData, 'class')
   prediction = makeRpartTreePrediction(tree, testData, 'class')
   
-  return (confusionMatrix(prediction, testData$cl))
+  return (confusionMatrix(prediction, testData$cl, mode="everything"))
 }

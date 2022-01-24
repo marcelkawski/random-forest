@@ -8,7 +8,7 @@ getRpartForestModel = function(data, method, treesNum) {
     # sampling rows
     samples = data[sample(nrow(data), nrow(data), replace = TRUE), ]
     
-    tree <- rpart(cl ~ ., samples, method = alist)
+    tree <- rpart(cl ~ ., samples, method = method, minsplit=10, parms=list(split="information"))
     forest[[i]] = tree
   }
   
@@ -36,23 +36,23 @@ makeRpartForestPrediction = function(forest, data, type) {
 }
 
 
-getRpartForestConfMatrix = function(data, treesNum = 50) {
+getRpartForestConfMatrix = function(data, treesNum = 300) {
   attach(splitData(data))
   
-  alist <- list(eval=evaluationFunction, split=splitFunction, init=initFunction)
+  methodFuncs <- list(eval=evaluationFunction, split=splitFunction, init=initFunction)
   forest = getRpartForestModel(trainData, alist, treesNum)
   prediction = makeRpartForestPrediction(forest, testData, 'vector')
   
   prediction = convertPrediction(prediction = prediction, testData = testData)
   
   return (confusionMatrix(as.factor(prediction), 
-                          as.factor(as.character(testData$cl))))
+                          as.factor(as.character(testData$cl)), mode="everything"))
 }
 
 convertPrediction = function(prediction, testData){
   
-  print(min(prediction))
-  print(max(prediction))
+  # print(min(prediction))
+  # print(max(prediction))
   
   minPrediction = min(prediction)
   maxPrediction = max(prediction)
@@ -73,17 +73,7 @@ convertPrediction = function(prediction, testData){
     }
   }
   
-  print(prediction)
-  # treshold = as.double(min(prediction)) + step
-  # 
-  # for (i in 1:length(prediction)){
-  #   if(prediction[i] <  treshold){
-  #     prediction[i] = levels(testData$cl)[1]
-  #   }
-  #   else{
-  #     prediction[i] = levels(testData$cl)[2]
-  #   }
-  # }
+  # print(prediction)
   
   return (prediction)
 }

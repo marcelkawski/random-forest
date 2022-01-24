@@ -3,7 +3,7 @@ library(caret)
 
 
 getRFModel = function(formula, data) {
-  return (randomForest(formula, data = data))
+  return (randomForest(formula, data = data, ntree = 500, mtry = 16, nodesize = 3))
 }
 
 makeRFPrediction = function(model, data) {
@@ -17,5 +17,5 @@ getRFConfMatrix = function(data) {
   rf = getRFModel(cl ~ ., trainData)
   prediction = makeRFPrediction(rf, testData)
   
-  return (confusionMatrix(prediction, testData$cl))
+  return (confusionMatrix(prediction, testData$cl, mode="everything"))
 }
